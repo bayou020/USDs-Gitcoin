@@ -233,7 +233,7 @@ The fix consists to remove the modifier `internal` from the constructor as follo
 ### 3.2.3 Forbidden uint(-1) type:
 
 To fix this issue, and get the maximum value of an integer we can proceed into different approaches like mentionned in [here](https://forum.openzeppelin.com/t/using-the-maximum-integer-in-solidity/3000)
-but all those methods are more *gas* consuming and the best method to get the maximum value and spending less gas is `type(uintX).max` where $X$ is the number of bits from $2^3=8$ till $2^8=256$
+but all those methods are more *gas* consuming and the best method to get the maximum value and spending less gas is `type(uintX).max` where *X* is the number of bits from 2^3=8 till  2^8=256
 
 after testing the new method on:
 
@@ -242,12 +242,12 @@ after testing the new method on:
 ![image1](images/Repport1.png)
 ![image2](images/Repport2.png)
 
-The *used gas* value is $89736$
+The *used gas* value is *89736*
 
 2 [ethfiddle](https://ethfiddle.com/) using *solidity compiler* version *0.4.18* we got:
 ![image3](images/Repport4.png)
 ![image4](images/Repport3.png)
-The *used gas* value is $91043$
+The *used gas* value is *91043*
 
 
   # 4. Sources:
