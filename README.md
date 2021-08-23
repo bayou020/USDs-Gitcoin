@@ -56,6 +56,7 @@
 
  you can find the fixed version on this  [link](https://github.com/bayou020/USDs-Gitcoin/)
 
+all code modifications were commited into this [link](https://github.com/bayou020/USDs-Gitcoin/commit/a1957982ee2c6e61596842f277b9fb4ab1641bf5#diff-0194acfe55095df794a50ab963ef69609651c5e807c4a75c6dd4ec1590310889L297)
   # 2. Implementation Issues
   ## 2.1. Warnings:
   ### 2.1.1. SPDX License:
