@@ -85,7 +85,7 @@ function getETHPrice() public view override returns (uint) {
         ERC20Upgradeable(_asset).safeApprove(lendingPoolVault, uint256(-1));
 
 ```
-here is the [fix](https://github.com/bayou020/USDs-Gitcoin#312-unused-local-variables)
+here is the [fix](#312-unused-local-variables)
 ## 2.2. Errors:
 ### 2.2.1. Dependencies import Errors:
 Since we use the last version of OpenZepplin contracts library few dependencies path were changed as follows:
