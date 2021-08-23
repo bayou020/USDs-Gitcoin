@@ -1,4 +1,4 @@
-pragma solidity ^0.6.12;
+pragma solidity ^0.8.0;
 
 /**
  * @title Platform interface to integrate with lending platform like Compound, AAVE etc.

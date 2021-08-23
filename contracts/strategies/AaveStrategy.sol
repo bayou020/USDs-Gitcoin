@@ -1,19 +1,18 @@
-pragma solidity ^0.6.12;
+pragma solidity ^0.8.0;
 
 /**
  * @title OUSD Aave Strategy
  * @notice Investment strategy for investing stablecoins via Aave
  * @author Origin Protocol Inc
  */
+// SPDX-License-Identifier: MIT
 import "./IAave.sol";
-import {
-    ERC20Upgradeable,
-    InitializableAbstractStrategy
-} from "./InitializableAbstractStrategy.sol";
+import {ERC20Upgradeable, InitializableAbstractStrategy} from "./InitializableAbstractStrategy.sol";
+import  "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol"; //add import
 
 contract AaveStrategy is InitializableAbstractStrategy {
-    uint16 constant referralCode = 0;
-
+    using SafeERC20Upgradeable for ERC20Upgradeable;  //fixing recognition of safeERC20Upgradable
+    uint16 constant referralCode = 0;  
     /**
      * @dev Deposit asset into Aave
      * @param _asset Address of asset to deposit
@@ -21,9 +20,9 @@ contract AaveStrategy is InitializableAbstractStrategy {
      */
     function deposit(address _asset, uint256 _amount)
         external
+        override
         onlyVault
         nonReentrant
-        override
     {
         _deposit(_asset, _amount);
     }
@@ -43,9 +42,11 @@ contract AaveStrategy is InitializableAbstractStrategy {
     /**
      * @dev Deposit the entire balance of any supported asset into Aave
      */
-    function depositAll() external onlyVault nonReentrant override {
+    function depositAll() external override onlyVault nonReentrant {
         for (uint256 i = 0; i < assetsMapped.length; i++) {
-            uint256 balance = ERC20Upgradeable(assetsMapped[i]).balanceOf(address(this));
+            uint256 balance = ERC20Upgradeable(assetsMapped[i]).balanceOf(
+                address(this)
+            );
             if (balance > 0) {
                 _deposit(assetsMapped[i], balance);
             }
@@ -62,7 +63,7 @@ contract AaveStrategy is InitializableAbstractStrategy {
         address _recipient,
         address _asset,
         uint256 _amount
-    ) external onlyVault nonReentrant override {
+    ) external override onlyVault nonReentrant {
         require(_amount > 0, "Must withdraw something");
         require(_recipient != address(0), "Must specify recipient");
 
@@ -75,7 +76,7 @@ contract AaveStrategy is InitializableAbstractStrategy {
     /**
      * @dev Remove all assets from platform and send them to Vault contract.
      */
-    function withdrawAll() external onlyVaultOrGovernor nonReentrant override {
+    function withdrawAll() external override onlyVaultOrGovernor nonReentrant {
         for (uint256 i = 0; i < assetsMapped.length; i++) {
             // Redeem entire balance of aToken
             IAaveAToken aToken = _getATokenFor(assetsMapped[i]);
@@ -112,7 +113,12 @@ contract AaveStrategy is InitializableAbstractStrategy {
      * @dev Retuns bool indicating whether asset is supported by strategy
      * @param _asset Address of the asset
      */
-    function supportsAsset(address _asset) external view override returns (bool) {
+    function supportsAsset(address _asset)
+        external
+        view
+        override
+        returns (bool)
+    {
         return assetToPToken[_asset] != address(0);
     }
 
@@ -120,7 +126,13 @@ contract AaveStrategy is InitializableAbstractStrategy {
      * @dev Approve the spending of all assets by their corresponding aToken,
      *      if for some reason is it necessary.
      */
-    function safeApproveAllTokens() external onlyGovernor nonReentrant override {
+    function safeApproveAllTokens()
+        external
+        override
+        onlyGovernor
+        nonReentrant
+    {   
+        
         uint256 assetCount = assetsMapped.length;
         address lendingPoolVault = _getLendingPoolCore();
         // approve the pool to spend the bAsset
@@ -128,7 +140,7 @@ contract AaveStrategy is InitializableAbstractStrategy {
             address asset = assetsMapped[i];
             // Safe approval
             ERC20Upgradeable(asset).safeApprove(lendingPoolVault, 0);
-            ERC20Upgradeable(asset).safeApprove(lendingPoolVault, uint256(-1));
+            ERC20Upgradeable(asset).safeApprove(lendingPoolVault, type(uint256).max);// fixed uint256(-1) which gives the max value
         }
     }
 
@@ -138,10 +150,15 @@ contract AaveStrategy is InitializableAbstractStrategy {
      * @param _asset Address of the asset to approve
      * @param _aToken This aToken has the approval approval
      */
-    function _abstractSetPToken(address _asset, address _aToken) internal override {
-        address lendingPoolVault = _getLendingPoolCore();
-        ERC20Upgradeable(_asset).safeApprove(lendingPoolVault, 0);
-        ERC20Upgradeable(_asset).safeApprove(lendingPoolVault, uint256(-1));
+
+     //Fixed unused _aToken Variable by deleting lendingPoolVault variable and assigning it to _aToken one for approval
+    function _abstractSetPToken(address _asset, address _aToken) 
+        internal
+        override
+    {
+        _aToken = _getLendingPoolCore();
+        ERC20Upgradeable(_asset).safeApprove(_aToken, 0);
+        ERC20Upgradeable(_asset).safeApprove(_aToken, type(uint256).max); // fixed Explicit type conversion not allowed from "int_const -1" to "uint256". which gives the max value
     }
 
     /**
@@ -176,8 +193,7 @@ contract AaveStrategy is InitializableAbstractStrategy {
     function _getLendingPoolCore() internal view returns (address payable) {
         address payable lendingPoolCore = ILendingPoolAddressesProvider(
             platformAddress
-        )
-            .getLendingPoolCore();
+        ).getLendingPoolCore();
         require(
             lendingPoolCore != address(uint160(address(0))),
             "Lending pool core does not exist"

@@ -1,6 +1,7 @@
-pragma solidity ^0.6.12;
+ // SPDX-License-Identifier: MIT 
+pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import { USDs } from "../token/USDs.sol";
 import { BancorFormula } from "../libraries/BancorFormula.sol";
 

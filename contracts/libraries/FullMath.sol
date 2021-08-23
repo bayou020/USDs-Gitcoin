@@ -1,11 +1,11 @@
-
+//SPDX-License-Identifier: UNLICENSED" 
 pragma solidity >=0.4.0;
 
 // taken from https://medium.com/coinmonks/math-in-solidity-part-3-percents-and-proportions-4db014e080b1
 // license is CC-BY-4.0
 library FullMath {
     function fullMul(uint256 x, uint256 y) internal pure returns (uint256 l, uint256 h) {
-        uint256 mm = mulmod(x, y, uint256(-1));
+        uint256 mm = mulmod(x, y, type (uint256).max);
         l = x * y;
         h = mm - l;
         if (mm < l) h -= 1;
@@ -16,10 +16,10 @@ library FullMath {
         uint256 h,
         uint256 d
     ) private pure returns (uint256) {
-        uint256 pow2 = d & -d;
+        uint256 pow2 = d & (~d+1); // fixed -d typo into 0.8.0 solidity source https://cs.stackexchange.com/questions/138556/how-to-find-the-largest-power-of-two-divisor-of-a-given-integer
         d /= pow2;
         l /= pow2;
-        l += h * ((-pow2) / pow2 + 1);
+        l += h * ((~pow2+1) / pow2 + 1); //fixed (-pow2) typo 
         uint256 r = 1;
         r *= 2 - d * r;
         r *= 2 - d * r;

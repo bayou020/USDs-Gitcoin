@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 
 //TO-DO: have getUSDsPrice_Average() returns USDs price over longer period;
-pragma solidity ^0.6.12;
+pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2; //What's this for?
 
 
-import "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/math/SafeMathUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 
 import { USDs } from "../token/USDs.sol";
 import "../interfaces/AggregatorV3Interface.sol";
@@ -26,7 +26,7 @@ import "../interfaces/IQuoter.sol";
 contract Oracle is Initializable, IOracle, OwnableUpgradeable {
     using SafeMathUpgradeable for *;
 
-    event Update(uint currPriceMA, uint currPricetime);
+    event Updated(uint currPriceMA, uint currPricetime);
 
 	event PriceListUpdated(
 		address indexed token,
@@ -120,7 +120,7 @@ contract Oracle is Initializable, IOracle, OwnableUpgradeable {
         USDsInOutRatioPrecision = 10000000; // Note: need to be less than (2^32 - 1)
 
         priceFeedETH = AggregatorV3Interface(0x9326BFA02ADD2366b30bacB125260Af641031331);
-        uint32 constructTime = uint32(now % 2 ** 32);
+        uint32 constructTime = uint32(block.timestamp % 2 ** 32);
         _pair = IUniswapV2Pair(pair_);
         lastUpdateTime = constructTime;
 
@@ -292,7 +292,7 @@ contract Oracle is Initializable, IOracle, OwnableUpgradeable {
      */
     function update() external override {
         // check if enough time has elapsed for a new update
-        uint32 currTime = uint32(now % 2 ** 32);
+        uint32 currTime = uint32(block.timestamp % 2 ** 32);
         uint32 timeElapsed = currTime - lastUpdateTime;
         require(timeElapsed >= period, "update() : the time elapsed is too short.");
 
@@ -316,7 +316,7 @@ contract Oracle is Initializable, IOracle, OwnableUpgradeable {
         // update global status
         lastUpdateTime = currTime;
         pricetimeOldestIndex = indexOld;
-        emit Update(token0PriceMA, price0Cumulative);
+        emit Updated(token0PriceMA, price0Cumulative);
 
         USDsInflow[indexNew] = USDsInstance._totalMinted();
         USDsOutflow[indexNew] = USDsInstance._totalBurnt();

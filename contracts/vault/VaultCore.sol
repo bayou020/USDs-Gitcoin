@@ -3,13 +3,14 @@
 // Note: assuming when exponentWithPrec >= 2^32, toReturn >= swapFeePresion () (TO-DO: work out the number)
 //TO-DO: AAVE in progress
 //TO-DO: deal with assetDefaultStrategies
-pragma solidity ^0.6.12;
+ // SPDX-License-Identifier: MIT 
+pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/math/SafeMathUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 
 import "../libraries/MyMath.sol";
@@ -531,7 +532,7 @@ contract VaultCore is Initializable, OwnableUpgradeable {
 		ratio = totalValueLocked.mul(chiPrec).div(USDsValue);
     }
 
-    function totalValueLocked() external view returns (uint value) {
+    function total_Value_Locked() external view returns (uint value) {
         value = _totalValueLocked();
     }
 

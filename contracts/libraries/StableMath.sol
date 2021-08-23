@@ -1,6 +1,6 @@
-pragma solidity ^0.6.12;
+pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts-upgradeable/math/SafeMathUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 
 // Based on StableMath from Stability Labs Pty. Ltd.
 // https://github.com/mstable/mStable-contracts/blob/master/contracts/shared/StableMath.sol
@@ -22,15 +22,20 @@ library StableMath {
      * @dev Adjust the scale of an integer
      * @param adjustment Amount to adjust by e.g. scaleBy(1e18, -1) == 1e17
      */
-    function scaleBy(uint256 x, int8 adjustment)
+     // Explicit type conversion not allowed from "int8" to "uint256". fix
+     // if adjustment < 0 we just use devide by the abs of adjustment 
+    function scaleBy(uint256 x, int256 adjustment)
         internal
         pure
         returns (uint256)
     {
+     
+    
         if (adjustment > 0) {
             x = x.mul(10**uint256(adjustment));
         } else if (adjustment < 0) {
-            x = x.div(10**uint256(adjustment * -1));
+            adjustment=-adjustment;
+            x = x.div(10**uint256(adjustment));
         }
         return x;
     }
