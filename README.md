@@ -26,6 +26,8 @@
   ```
   this warning was found on all files.
 
+  here is the [fix](#311-spdx-license)
+
 ### 2.1.2. Unused Local Variables:
  on the file `contracts/oracle/oracle.sol` There was a lot of unused local variables as follows:
  
@@ -121,6 +123,44 @@ contracts/token/USDs.sol
 contracts/strategies/InitializableAbstractStrategy.sol
 contracts/oracle/Oracle.sol 
 ```
+here is the [fix](#321-dependencies-import-errors)
+### 2.2.2 Declaration error:
+in the file `Governable.sol` on the `Line 42` there was an error in the declaration of a constructor
+```javascript
+  constructor() internal  {
+        _setGovernor(msg.sender);
+        emit GovernorshipTransferred(address(0), _governor());
+    }
+```
+which landed to this error 
+```
+DeclarationError: Non-abstract contracts cannot have internal constructors. Remove the "internal" keyword and make the contract abstract to fix this.
+--> contracts/governable.sol:42:5:
+
+```
+here is the [fix](#322-declaration-error)
+### 2.2.3 Forbidden uint(-1) type:
+this error is due to the decapation of solidity compiler for using it as a casting for a `MAX_VALUE` [2](https://docs.soliditylang.org/en/v0.8.0/080-breaking-changes.html) on **New restrictions section**
+
+this error was found on those files
+```
+contracts/libraries/BitMath.sol Lines: 48,53,58,63,68
+```
+```
+contracts/libraries/FixedPoint.sol
+
+Lines: 81, 87, 98,100,105,115,117,121,138
+
+```
+```
+contracts/libraries/FullMath.sol
+Line: 8
+```
+```
+contracts/strategies/AaveStrategy.sol
+Line:131,144
+```
+Here is the [fix](#323-forbidden-uint-1-type)
 
 # 3. Implementation Fixes:
 ## 3.1. Warnings:
@@ -172,7 +212,6 @@ contracts/vault/VaultCore.sol
 
 `"@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol"`
 
-
 ```
 contracts/vault/VaultStorage.sol
 contracts/vault/VaultCore.sol
@@ -180,6 +219,36 @@ contracts/token/USDs.sol
 contracts/strategies/InitializableAbstractStrategy.sol
 contracts/oracle/Oracle.sol 
 ```
+### 3.2.2 Declaration error:
+
+The fix consists to remove the modifier `internal` from the constructor as follows
+
+```javascript
+ constructor()  {
+        _setGovernor(msg.sender);
+        emit GovernorshipTransferred(address(0), _governor());
+    }
+
+```
+### 3.2.3 Forbidden uint(-1) type:
+
+To fix this issue, and get the maximum value of an integer we can proceed into different approaches like mentionned in [here](https://forum.openzeppelin.com/t/using-the-maximum-integer-in-solidity/3000)
+but all those methods are more *gas* consuming and the best method to get the maximum value and spending less gas is `type(uintX).max` where $X$ is the number of bits from $2^3=8$ till $2^8=256$
+
+after testing the new method on:
+
+1- *Remix IDE* using *solidity compiler* version *0.8.0* we got:
+
+![image1](images/Repport1.png)
+![image2](images/Repport2.png)
+
+The *used gas* value is $89736$
+
+2 [ethfiddle](https://ethfiddle.com/) using *solidity compiler* version *0.4.18* we got:
+![image3](images/Repport4.png)
+![image4](images/Repport3.png)
+The *used gas* value is $91043$
+
 
   # 4. Sources:
   
