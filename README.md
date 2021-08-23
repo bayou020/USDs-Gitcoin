@@ -22,7 +22,7 @@
     - [2.2.6. Duplicated Declared modifier:](#226-duplicated-declared-modifier)
     - [2.2.7 deprecated now method:](#227-deprecated-now-method)
     - [2.2.8. Unary operator](#228-unary-operator)
-  - [2.2.9. Adjustement function:](#229-adjustement-function)
+    - [2.2.9. Adjustement function:](#229-adjustement-function)
 - [3. Implementation Fixes:](#3-implementation-fixes)
   - [3.1. Warnings:](#31-warnings)
     - [3.1.1. SPDX License:](#311-spdx-license)
@@ -37,7 +37,7 @@
     - [3.2.6. Duplicated Declared modifier:](#326-duplicated-declared-modifier)
     - [3.2.7 deprecated now method:](#327-deprecated-now-method)
     - [3.2.8. Unary operator](#328-unary-operator)
-  - [3.2.9. Adjustement function:](#329-adjustement-function)
+  - [# 3.2.9. Adjustement function:](#-329-adjustement-function)
 - [4. Sources:](#4-sources)
 
   ## 1.1. Background
@@ -273,7 +273,7 @@ Unary operator - cannot be applied to type uint256
 ```
 Here is the **[fix](#328-unary-operator)**
 
-## 2.2.9. Adjustement function:
+### 2.2.9. Adjustement function:
 
 in `contracts/libraries/StableMath.sol` 
 ``` 
@@ -414,7 +414,7 @@ this error can by fixed by changing the previous form to this one:
 uint256 pow2 = d & (~d+1);
 l += h * ((~pow2+1) / pow2 + 1);
 ```
-## 3.2.9. Adjustement function:
+## # 3.2.9. Adjustement function:
 
 to fix this issue we need to change the variable type of *adjustement* to `int256` to cast it proprely with `uint256` local and return variables. the if we want to cast it to another data type then it must be an `uint` variable.
 
