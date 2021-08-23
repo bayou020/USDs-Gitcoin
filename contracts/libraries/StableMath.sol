@@ -34,8 +34,8 @@ library StableMath {
         if (adjustment > 0) {
             x = x.mul(10**uint256(adjustment));
         } else if (adjustment < 0) {
-            adjustment=-adjustment;
-            x = x.div(10**uint256(adjustment));
+         
+            x = x.div(10**uint256(adjustment * -1));
         }
         return x;
     }

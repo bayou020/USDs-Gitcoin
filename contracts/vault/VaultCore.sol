@@ -532,7 +532,7 @@ contract VaultCore is Initializable, OwnableUpgradeable {
 		ratio = totalValueLocked.mul(chiPrec).div(USDsValue);
     }
 
-    function total_Value_Locked() external view returns (uint value) {
+    function totalValueLocked() external view returns (uint value) {
         value = _totalValueLocked();
     }
 
